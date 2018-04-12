@@ -1,7 +1,7 @@
 *-----------------------------------------------------------
-* Title      :
-* Written by :
-* Date       :
+* Title      : Castle botherers 7
+* Written by : Ethan Fagan
+* Date       : 16/3/18
 * Description:
 *-----------------------------------------------------------
     ORG    $1000
@@ -20,14 +20,16 @@ START:                  ; first instruction of program
 exit        EQU 0      used to exit assembly program
 min_feed    EQU 100    min feed requirement
 min_horses  EQU 1      min number of horses
-max_horses  EQU 9      max number of horses
+max_horses  EQU 10     max number of horses
 min_soldier EQU 6      min soldiers
 min_charge  EQU 1      min rate of fuel use based of speed (oats for horses)
 max_charge  EQU 5      max rate e.g. Flank       
 hit_point   EQU 5      points accumilated on castle (objective) strike
 miss_point  EQU 8      points deducted for ordinace miss
 
-amount_feed EQU 0      players current amount of feed
+amount_feed_purchased EQU 0      amount of feed entered by the player
+amount_horses_purchased EQU 0    amount of horses entered by the player
+amount_soldiers_hired EQU 0      amount of soldiers entered by the player
 
 mine_loc    EQU 100    example for a hit
 
@@ -69,11 +71,12 @@ welcome:
 *---------Gameplay Input Values Subroutine--------------
 *-------------------------------------------------------    
 input:
-    bsr     feed            branch to feed input subroutine
+    bsr     soldiers        branch to soldiers input subroutine
     bsr     horses          branch to ship input subroutine
+    bsr     feed            branch to feed input subroutine
     bsr     rate            branch to rate (charging speed) input subroutine
     bsr     distance        branch to mission distance/location input subroutine
-    bsr     soldiers        branch to soldiers input subroutine
+    
     rts
 
 *-------------------------------------------------------
@@ -128,7 +131,7 @@ feed:
     bsr     decorate
     lea     feed_msg,A1
     
-    move.b  amount_feed, d3
+    move.b  amount_feed_purchased, d3
     
     move.b  #14,D0
     trap    #15
@@ -137,8 +140,6 @@ feed:
     trap    #15
     
     move.b d1,d3
-    
-    move.b d3,d1
     
     move #3,d0
     trap #15
@@ -154,12 +155,22 @@ horses:
     bsr     endl
     bsr     decorate
     lea     horses_msg,A1
+    
+    move.b  amount_horses_purchased, d3
+    
     move.b  #14,D0
     trap    #15
     
-    move.b #9,d0
+    move.b #4,D0
+    trap    #15
+    
+    move.b d1,d3
+    
+    move #3,d0
     trap #15
-    bsr     decorate
+
+    
+       bsr     decorate
     rts
 
 *-------------------------------------------------------
@@ -196,8 +207,20 @@ soldiers:
     bsr     endl
     bsr     decorate
     lea     soldiers_msg,A1
+    
+    move.b  amount_soldiers_hired, d3
+    
     move.b  #14,D0
     trap    #15
+    
+    move.b #4,D0
+    trap    #15
+    
+    move.b d1,d3
+    
+    move #3,d0
+    trap #15
+
     bsr     decorate
     rts
 
@@ -356,6 +379,8 @@ score:      ds.w    1 reserve space for score
     end start
 
     END    START        ; last line of source
+
+
 
 
 
