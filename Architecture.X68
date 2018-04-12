@@ -10,7 +10,7 @@ START:                  ; first instruction of program
     org $1000
 
 *-------------------------------------------------------
-*Choose to be Evil Wizard or the Knights Of Dio
+*Choose to be Evil Crimson Wizard or the knights of Dio
 *-------------------------------------------------------
 
 *-------------------------------------------------------
@@ -26,6 +26,8 @@ min_charge  EQU 1      min rate of fuel use based of speed (oats for horses)
 max_charge  EQU 5      max rate e.g. Flank       
 hit_point   EQU 5      points accumilated on castle (objective) strike
 miss_point  EQU 8      points deducted for ordinace miss
+
+amount_feed EQU 0      players current amount of feed
 
 mine_loc    EQU 100    example for a hit
 
@@ -125,8 +127,22 @@ feed:
     bsr     endl
     bsr     decorate
     lea     feed_msg,A1
+    
+    move.b  amount_feed, d3
+    
     move.b  #14,D0
     trap    #15
+    
+    move.b #4,D0
+    trap    #15
+    
+    move.b d1,d3
+    
+    move.b d3,d1
+    
+    move #3,d0
+    trap #15
+    
     bsr     decorate
     rts
 
@@ -140,6 +156,9 @@ horses:
     lea     horses_msg,A1
     move.b  #14,D0
     trap    #15
+    
+    move.b #9,d0
+    trap #15
     bsr     decorate
     rts
 
@@ -337,6 +356,7 @@ score:      ds.w    1 reserve space for score
     end start
 
     END    START        ; last line of source
+
 
 
 *~Font name~Courier New~
