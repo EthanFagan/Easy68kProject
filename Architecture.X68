@@ -1,6 +1,6 @@
 *-----------------------------------------------------------
 * Title      : Castle botherers 7
-* Written by : Ethan Fagan
+* Written by : Ethan Fagan, C00232277
 * Date       : 16/3/18
 * Description:
 *-----------------------------------------------------------
@@ -91,7 +91,7 @@ input:
 *------------------------------------------------------- 
 gameloop:
     bsr     update          branch to update game subroutine 
-    bsr     clear_screen    clears the screen         
+*    bsr     clear_screen    clears the screen         
 
     rts                     return from gameloop: subroutine
 
@@ -316,19 +316,37 @@ siege:
       move.b #14,D0
       trap #15
       
+    lea     Press0,A1
+    move.b  #14,D0
+    trap    #15
+    
+    move.b #4,D0
+    trap #15
+
+      
       move.l $2000, d2
       move.l $2750, d3
+*      cmp d2,d3
       bsr victory_screen
       rts
 *-------------------------------------------------------
 *-----------------victory-------------------------------
 *-------------------------------------------------------
 victory_screen:
-        bsr clear_screen
         lea victory, A1
         move.b #14,D0
         trap #15
+        lea Press0,A1
+        move.b #4,D0
+        trap #15
+        move.l $2250,D2
+        add.l #200, D2
+        move.l D2, $2250
+        move.l $2750, D2
+        add.l #5,D2
+        move.l D2, $2750
         bsr market
+        rts
 *-------------------Horse(s) Charge Speed---------------
 * horses speed to and from a mission
 *------------------------------------------------------- 
@@ -549,45 +567,54 @@ market_image:   dc.b    '**                       \market/                      
                 dc.b    '                                                             ',0
 *-----------------------------------------------------------------------------------------------
 
-castle_image:   dc.b    '*****************************/-\**************               '
+castle_image:   dc.b    '     SIEGE                   /-\                             '
                 dc.b    $0D,$0A
-                dc.b    '*************/\************|**0**|********/\****             '
+                dc.b    '             /\            |  0  |          /\               '
                 dc.b    $0D,$0A
-                dc.b    '***********|-------------         -----------|-\****         '
+                dc.b    '           |-------------         -----------|-\             '
                 dc.b    $0D,$0A
-                dc.b    '***********|  D    D     ---------   D   D   |***|***********'
+                dc.b    '           |  D    D     ---------   D   D   |***|           '
                 dc.b    $0D,$0A
-                dc.b    '***********|  D    D        -        D   D   |***|***********'
+                dc.b    '           |  D    D        -        D   D   |***|           '
                 dc.b    $0D,$0A
-                dc.b    '***********|              |*|*|              |***|***********'
+                dc.b    '           |              |*|*|              |***|           '
                 dc.b    $0D,$0A
-                dc.b    '***********|              |*|*|              |***|***********'
+                dc.b    '           |              |*|*|              |***|           '
                 dc.b    $0D,$0A
                 dc.b    '                                                             ',0
 *-----------------------------------------------------------------------------------------------
-victory:        dc.b    '*************************************************************'
-                dc.b    '**************T*O*T*A*L**D*O*M*I*N*A*T*I*O*N*****************'
+victory:        dc.b    $0D.$0A           
                 dc.b    '*************************************************************'
+                dc.b    $0D,$0A
+                dc.b    '****************T*O*T*A*L**D*O*M*I*N*A*T*I*O*N***************'
+                dc.b    $0D,$0A
                 dc.b    '********"you have liberated the castle and its people"*******'
+                dc.b    $0D,$0A
                 dc.b    '*************************************************************',0
 *-----------------------------------------------------------------------------------------------
-defeat:         dc.b    '*************************************************************'
-                dc.b    '**************C*R*U*S*H*I*N*G**D*E*F*E*A*T*******************'
+defeat:         dc.b    $0D.$0A
                 dc.b    '*************************************************************'
+                dc.b    $0D.$0A
+                dc.b    '**************C*R*U*S*H*I*N*G**D*E*F*E*A*T*******************'
+                dc.b    $0D.$0A
+                dc.b    '*************************************************************'
+                dc.b    $0D.$0A
                 dc.b    '********"the losses were heavy, but hope is not lost"********'
+                dc.b    $0D.$0A
                 dc.b    '*************************************************************',0
 *-----------------------------------------------------------------------------------------------
 OutPutSol:  dc.b   'Your current amount of soldiers is:',0
 NoOfGold: dc.b   'Your current gold is:',0
 NoOfFeed: dc.b   'Your current feed amount is:',0
 NoOfHorses: dc.b 'Your current amount of horses is:',0
-Press0: dc.b 'Press 0 to continue',0
+Press0: dc.b 'Press any key ',0
 health:     ds.w    1
 score:      ds.w    1 reserve space for score
 
     end start
 
     END    START        ; last line of source
+
 
 
 
